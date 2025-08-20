@@ -76,7 +76,9 @@ export function ChatInterface({ initialMessage, onComplete }: ChatInterfaceProps
           // Send all answers to API endpoint
           let finalContext = ""
           try {
-            const response = await fetch("/api/campaign-context", {
+            // Replace "/api/campaign-context" with your API endpoint "https://your-api.com/campaign-context"
+            // after replacing ignore app/api/campaign-context.js file
+            const response = await fetch("http://localhost:8000/api/campaign-context", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
