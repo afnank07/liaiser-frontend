@@ -21,11 +21,14 @@ export function ChatInterface({ initialMessage, onComplete }: ChatInterfaceProps
   const [conversationStep, setConversationStep] = useState(0)
   const [messageCounter, setMessageCounter] = useState(0)
   const [answers, setAnswers] = useState<string[]>([])
+  const [qaPairs, setQaPairs] = useState<{ question: string; answer: string }[]>([])
 
   const aiQuestions = [
     "Thanks! That's a great start. Could you tell me what specific problem this product solves for them?",
     "Perfect! What's the typical budget range your ideal customers work with for solutions like this?",
-    "Excellent. What channels do your best customers usually hang out on? Any specific Telegram groups or communities?",
+    "Which domain will this product serve? For example, DeFi, NFT, GameFi, DAOs, etc.",
+    "Which chain do you want to focus on? For example, Ethereum, Solana, Aptos, etc.",
+    "Are you targeting any specific roles? For example, founders, marketers, business developers, etc.",
     "Great insights! Based on what you've shared, I'll create a targeted outreach strategy. Let me summarize your campaign context.",
   ]
 
@@ -66,6 +69,9 @@ export function ChatInterface({ initialMessage, onComplete }: ChatInterfaceProps
 
     setMessages((prev) => [...prev, newMessage])
     setAnswers((prev) => [...prev, currentInput])
+    if (conversationStep > 0 && conversationStep <= aiQuestions.length) {
+      setQaPairs((prev) => [...prev, { question: aiQuestions[conversationStep - 1], answer: currentInput }])
+    }
     setCurrentInput("")
     setIsAITyping(true)
     const nextCounter = messageCounter + 1
@@ -73,17 +79,15 @@ export function ChatInterface({ initialMessage, onComplete }: ChatInterfaceProps
     setTimeout(async () => {
       if (conversationStep < aiQuestions.length) {
         if (conversationStep === aiQuestions.length - 1) {
-          // Send all answers to API endpoint
+          // Send all questions and answers to API endpoint
           let finalContext = ""
           try {
-            // Replace "/api/campaign-context" with your API endpoint "https://your-api.com/campaign-context"
-            // after replacing ignore app/api/campaign-context.js file
             const response = await fetch("http://localhost:8000/api/campaign-context", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 initialMessage,
-                answers: [...answers, currentInput],
+                qaPairs: [...qaPairs, { question: aiQuestions[conversationStep], answer: currentInput }],
               }),
             })
             const data = await response.json()

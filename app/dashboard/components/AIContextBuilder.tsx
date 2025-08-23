@@ -51,7 +51,7 @@ export function AIContextBuilder() {
               <div className="glass-card rounded-xl p-4 mb-4 hover:glass-card-hover transition-all duration-200">
                 <p className="text-gray-200">
                   <strong className="text-blue-400 glow-text-subtle">AI Strategist:</strong> Hello! To find the perfect
-                  customers for you, please describe your product or service and its ideal customer.
+                  customers for you, please describe your product or service.
                 </p>
               </div>
             </div>
