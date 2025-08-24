@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { useDispatch } from "react-redux"
+import { setCampaigns } from "@/lib/redux/campaignsSlice"
 import { ChatInterface } from "./ChatInterface"
 
 type BuilderState = "initial" | "chatting" | "completed"
@@ -9,6 +11,7 @@ export function AIContextBuilder() {
   const [state, setState] = useState<BuilderState>("initial")
   const [initialInput, setInitialInput] = useState("")
   const [finalContext, setFinalContext] = useState("")
+  const dispatch = useDispatch()
 
   const handleBegin = () => {
     if (initialInput.trim()) {
@@ -21,10 +24,24 @@ export function AIContextBuilder() {
     setState("completed")
   }
 
-  const handleLaunchCampaign = () => {
-    // Handle campaign launch
-    console.log("Launching campaign with context:", finalContext)
-    // Reset to initial state for demo
+  const handleLaunchCampaign = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/launch-campaign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ summary: finalContext }),
+      })
+      const data = await response.json()
+      if (data && data.campaigns) {
+        dispatch(setCampaigns(data.campaigns))
+      }
+      console.log("Campaign launched:", data)
+    } catch (err) {
+      console.error("Error launching campaign:", err)
+    }
+  }
+
+  const resetCampaign = async () => {
     setState("initial")
     setInitialInput("")
     setFinalContext("")
@@ -84,12 +101,20 @@ export function AIContextBuilder() {
             <h3 className="text-lg font-semibold mb-4 text-blue-400 glow-text-subtle">Final Campaign Context</h3>
             <p className="text-gray-200 leading-relaxed">{finalContext}</p>
           </div>
-          <button
-            onClick={handleLaunchCampaign}
-            className="px-8 py-3 glass-button text-white font-semibold rounded-xl hover:scale-105 transition-all duration-300 glow-box-subtle"
-          >
-            Launch Campaign
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={handleLaunchCampaign}
+              className="px-8 py-3 glass-button text-white font-semibold rounded-xl hover:scale-105 transition-all duration-300 glow-box-subtle"
+            >
+              Launch Campaign
+            </button>
+            <button
+              onClick={resetCampaign}
+              className="px-8 py-3 glass-button text-white font-semibold rounded-xl hover:scale-105 transition-all duration-300 glow-box-subtle bg-red-500"
+            >
+              Reset Campaign
+            </button>
+          </div>
         </div>
       )}
     </div>

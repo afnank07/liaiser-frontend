@@ -1,45 +1,19 @@
+"use client"
+import { useSelector } from 'react-redux'
+import { RootState } from '@/lib/redux/store'
+
 interface Campaign {
   id: string
   target: {
     username: string
     avatar: string
+    domain?: string
+    role?: string
+    tg_id?: string
   }
   status: "contacting" | "in-conversation" | "closed" | "failed"
   lastInteraction: string
 }
-
-const mockCampaigns: Campaign[] = [
-  {
-    id: "1",
-    target: { username: "@sarah_marketing", avatar: "S" },
-    status: "in-conversation",
-    lastInteraction: "2 hours ago",
-  },
-  {
-    id: "2",
-    target: { username: "@mike_startup", avatar: "M" },
-    status: "contacting",
-    lastInteraction: "5 hours ago",
-  },
-  {
-    id: "3",
-    target: { username: "@jenny_ceo", avatar: "J" },
-    status: "closed",
-    lastInteraction: "1 day ago",
-  },
-  {
-    id: "4",
-    target: { username: "@alex_founder", avatar: "A" },
-    status: "failed",
-    lastInteraction: "3 days ago",
-  },
-  {
-    id: "5",
-    target: { username: "@lisa_growth", avatar: "L" },
-    status: "in-conversation",
-    lastInteraction: "6 hours ago",
-  },
-]
 
 const getStatusBadge = (status: Campaign["status"]) => {
   const styles = {
@@ -66,6 +40,7 @@ const getStatusBadge = (status: Campaign["status"]) => {
 }
 
 export function CampaignStatus() {
+  const campaigns = useSelector((state: RootState) => state.campaigns.campaigns)
   return (
     <div className="glass-card-strong rounded-2xl p-8 hover:glass-card-hover transition-all duration-300">
       <h2 className="text-2xl font-bold mb-6 glow-text-subtle">Active Campaigns</h2>
@@ -81,7 +56,7 @@ export function CampaignStatus() {
             </tr>
           </thead>
           <tbody>
-            {mockCampaigns.map((campaign) => (
+            {campaigns.map((campaign: Campaign) => (
               <tr
                 key={campaign.id}
                 className="border-b border-white/5 hover:glass-card-subtle rounded-lg transition-all duration-300"
@@ -106,6 +81,7 @@ export function CampaignStatus() {
           </tbody>
         </table>
       </div>
+{/* // ...existing code... */}
     </div>
   )
 }
