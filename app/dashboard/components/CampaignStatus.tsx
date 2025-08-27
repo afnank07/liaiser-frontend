@@ -10,6 +10,7 @@ interface Campaign {
     domain?: string
     role?: string
     tg_id?: string
+    per_desc?: string
   }
   status: "contacting" | "in-conversation" | "closed" | "failed"
   lastInteraction: string
